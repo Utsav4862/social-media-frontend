@@ -14,18 +14,18 @@ export const SideBarData = [
     id: 2,
     label: "Search",
     icon: <IoSearchSharp size={20} />,
-    path: "/home/search",
+    path: "/search",
   },
   {
     id: 3,
     label: "Create",
     icon: <AiOutlinePlusSquare size={20} />,
-    path: "/home/create",
+    path: "/create",
   },
   {
     id: 4,
     label: "Profile",
     icon: <CgProfile size={20} />,
-    path: "/home/profile",
+    path: "/profile",
   },
 ];

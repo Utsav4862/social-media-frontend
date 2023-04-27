@@ -1,0 +1,19 @@
+.modal_header{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+textarea{
+    font-size: 15px;
+    border: 0;
+    height: 40px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 80%;
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.1);
+    outline: none;
+    width: 100%;
+    margin-bottom: 20px;
+}

@@ -20,7 +20,6 @@ function SideBar() {
       fontSize: "20px",
       fontWeight: "600",
       color: "#000",
-      // padding: "15px",
       borderRadius: "15px",
       textDecoration: "none",
       textAlign: "center",
@@ -35,6 +34,7 @@ function SideBar() {
         flexDirection: "column",
         justifyContent: "center",
         // alignItems: "center",
+
         border: "1px",
         borderColor: "red",
       }}
