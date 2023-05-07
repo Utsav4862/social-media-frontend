@@ -1,5 +1,5 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
-
+import CancelIcon from "@mui/icons-material/Cancel";
 import React, { useEffect, useState } from "react";
 import "./create.css";
 import { getTkn } from "../Func/getToken";
@@ -15,7 +15,6 @@ function CreatePost() {
   const navigate = useNavigate();
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
   const style = {
     position: "absolute",
@@ -23,7 +22,7 @@ function CreatePost() {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 500,
-    maxHeight: 800,
+    maxHeight: 750,
     bgcolor: "background.paper",
     // border: "2px solid #000",
     borderRadius: "15px",
@@ -71,76 +70,88 @@ function CreatePost() {
       return;
     }
     const objectUrl = URL.createObjectURL(imageData);
+    console.log(objectUrl);
     setPreview(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
   }, [imageData]);
   useEffect(() => {
+    let tkn = localStorage.getItem("user");
+    if (!tkn) {
+      navigate("/");
+    }
     handleOpen();
   }, []);
 
   return (
-    <>
-      {/* <Button onClick={handleOpen}>Open modal</Button> */}
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <div className="modal_header">
-            <h2 style={{ marginBottom: 20 }}>Add a Post</h2>
+    <Modal open={open}>
+      <Box sx={style}>
+        <div className="modal_header">
+          <CancelIcon
+            onClick={() => navigate("/home")}
+            style={{
+              cursor: "pointer",
+              position: "absolute",
+              left: 15,
+              top: 5,
+              marginBottom: 52,
+            }}
+          />
+          <h2 style={{ marginBottom: 20 }}>Add a Post</h2>
+          <Button
+            variant="outlined"
+            component="label"
+            style={{ fontWeight: "600" }}
+          >
+            {imageData ? "Change Picture" : "Select Picture"}
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              hidden
+              onChange={handleFileInput}
+            />
+          </Button>
+        </div>
+        {imageData ? (
+          <div style={{ width: "100%", height: "80%" }}>
+            <img
+              src={preview}
+              style={{ objectFit: "contain", width: "100%", height: "70%" }}
+            />
+          </div>
+        ) : (
+          ""
+        )}
+
+        {imageData ? (
+          <>
+            <textarea
+              cols="20"
+              rows="5"
+              placeholder="Write a Caption"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+            ></textarea>
             <Button
               variant="outlined"
-              component="label"
-              style={{ fontWeight: "600" }}
+              style={{
+                fontWeight: "600",
+                fontSize: 18,
+                color: "#fff",
+                backgroundColor: "#2abd6e",
+
+                width: "95%",
+              }}
+              onClick={post}
             >
-              {imageData ? "Change Picture" : "Select Picture"}
-              <input
-                type="file"
-                accept="image/png, image/jpeg"
-                hidden
-                onChange={handleFileInput}
-              />
+              Post
             </Button>
-          </div>
-          {imageData ? (
-            <div style={{ width: "100%", height: "80%" }}>
-              <img
-                src={preview}
-                style={{ objectFit: "contain", width: "100%", height: "70%" }}
-              />
-            </div>
-          ) : (
-            ""
-          )}
-
-          {imageData ? (
-            <>
-              <textarea
-                cols="20"
-                rows="5"
-                placeholder="Write a Caption"
-                value={caption}
-                onChange={(e) => setCaption(e.target.value)}
-              ></textarea>
-              <Button
-                variant="outlined"
-                style={{
-                  fontWeight: "600",
-                  fontSize: 18,
-                  color: "#fff",
-                  backgroundColor: "#2abd6e",
-
-                  width: "95%",
-                }}
-                onClick={post}
-              >
-                Post
-              </Button>
-            </>
-          ) : (
-            ""
-          )}
-          <br />
-        </Box>
-      </Modal>
-    </>
+          </>
+        ) : (
+          ""
+        )}
+        <br />
+      </Box>
+    </Modal>
   );
 }
 

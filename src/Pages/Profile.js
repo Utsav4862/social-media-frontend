@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { UserState } from "../Context/user";
-import { getCurrentUser, getUrlSearchedUser } from "../API/userApi";
-import { Avatar, Button } from "@mui/material";
+import {
+  doFollowUnFollow,
+  getCurrentUser,
+  getUrlSearchedUser,
+} from "../API/userApi";
+import { Alert, Avatar, Button, Snackbar } from "@mui/material";
 import "./Profile.css";
 import { getUsersPost } from "../API/postsApi";
+import EditProfile from "../Components/EditProfile";
+import Post from "../Components/Post";
 
 function Profile() {
   let { uname } = useParams();
@@ -12,31 +18,88 @@ function Profile() {
   const [profileUser, setProfileUser] = useState();
   const [posts, setPosts] = useState([]);
   const [buttonFlag, setButtonFlag] = useState(false);
+  const [followUnFollow, setFollowUnFollow] = useState({
+    text: "Follow",
+    color: "#2abd6e",
+  });
+  const [pop, setPop] = useState(false);
+  const [postPop, setPostPop] = useState(false);
+  const [postData, setPostData] = useState();
+  const [follow, setFollow] = useState(false);
+  const [unFollow, setUnFollow] = useState(false);
+
+  const navigate = useNavigate();
 
   const getUser = async () => {
     let userData = await getCurrentUser();
+    console.log(userData);
     if (uname && userData.username === uname) {
+      setUser(userData);
       setButtonFlag(true);
       setProfileUser(userData);
       let po = await getUsersPost(userData._id);
+      // let data = await getUrlSearchedUser(uname);
+
       setPosts(po);
     } else if (uname) {
       console.log(userData);
       let data = await getUrlSearchedUser(uname);
-      console.log(data);
+
       setProfileUser(data);
+
+      if (data.follower.includes(userData._id)) {
+        setFollowUnFollow({
+          text: "Unfollow",
+          color: "red",
+        });
+      } else {
+        setFollowUnFollow({
+          text: "Follow",
+          color: "#2abd6e",
+        });
+      }
       let po = await getUsersPost(data._id);
+      setUser(user);
       setPosts(po);
     } else {
-      setProfileUser(userData);
+      let u = await getCurrentUser();
+      console.log(u);
+      setProfileUser(u);
       let po = await getUsersPost(userData._id);
+      setUser(userData);
       setPosts(po);
     }
+
+    console.log(profileUser);
   };
+
+  const followHandle = async () => {
+    let value = followUnFollow.text.toLowerCase();
+    const data = await doFollowUnFollow(value, profileUser._id);
+    if (data.result) {
+      await getUser();
+      if (value == "follow") {
+        setFollow(true);
+      } else {
+        setUnFollow(true);
+      }
+    }
+  };
+  useEffect(() => {
+    console.log(uname);
+    getUser();
+    // getPosts();
+  }, [uname]);
 
   useEffect(() => {
     getUser();
-    // getPosts();
+  }, [pop, postPop]);
+
+  useEffect(() => {
+    let tkn = localStorage.getItem("user");
+    if (!tkn) {
+      navigate("/");
+    }
   }, []);
 
   return (
@@ -85,12 +148,13 @@ function Profile() {
               <Button
                 variant="outlined"
                 style={{
-                  color: "#2abd6e",
-                  borderColor: "#2abd6e",
+                  color: followUnFollow.color,
+                  borderColor: followUnFollow.color,
                   fontWeight: "600",
                 }}
+                onClick={followHandle}
               >
-                Follow
+                {followUnFollow.text}
               </Button>
             ) : (
               <Button
@@ -98,6 +162,7 @@ function Profile() {
                 style={{
                   fontWeight: "600",
                 }}
+                onClick={() => setPop(true)}
               >
                 Edit Profile
               </Button>
@@ -106,7 +171,13 @@ function Profile() {
           <div className="posts">
             {posts
               ? posts.map((post) => (
-                  <div className="post_imgg">
+                  <div
+                    className="post_imgg"
+                    onClick={() => {
+                      setPostPop(true);
+                      setPostData(post);
+                    }}
+                  >
                     <img src={post.image} className="img" />
                   </div>
                 ))
@@ -116,6 +187,36 @@ function Profile() {
       ) : (
         ""
       )}
+      {user ? <EditProfile pop={pop} setPop={setPop} user={user} /> : ""}
+      {user ? (
+        <Post
+          postPop={postPop}
+          setPostPop={setPostPop}
+          profileUser={profileUser}
+          postData={postData}
+          setPostData={setPostData}
+        />
+      ) : (
+        ""
+      )}
+      <Snackbar
+        open={follow}
+        autoHideDuration={1000}
+        onClose={() => setFollow(false)}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          Followed Successfully
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={unFollow}
+        autoHideDuration={1000}
+        onClose={() => setUnFollow(false)}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          Un-followed Successfully
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

@@ -34,15 +34,17 @@ function Home() {
 
   const getCurrentUserDetail = async () => {
     const data = await getCurrentUser();
-
+    console.log(data);
     setUser(data);
   };
 
   const likeUnlikePost = async (id, i, value) => {
     const data = await doLikeUnlikePost(id, value);
-    let temp = [...posts];
-    temp[i] = data;
-    setPosts(temp);
+    if (data) {
+      let temp = [...posts];
+      temp[i] = data;
+      setPosts(temp);
+    }
   };
 
   useEffect(() => {

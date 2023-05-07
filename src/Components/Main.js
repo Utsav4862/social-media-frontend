@@ -4,6 +4,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Profile from "../Pages/Profile";
 import Home from "../Pages/Home";
 import CreatePost from "../Pages/CreatePost";
+import Search from "../Pages/Search";
 
 function Main() {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ function Main() {
           <Route path="/profile/:uname" element={<Profile />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/create" element={<CreatePost />} />
+          <Route path="/search" element={<Search />} />
         </Routes>
       </div>
     </div>

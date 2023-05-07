@@ -4,12 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { URL } from "../API/api";
 import axios from "axios";
 import { UserState } from "../Context/user";
+
+import { Alert, Box, Modal, Snackbar } from "@mui/material";
 function Login() {
   const navigate = useNavigate();
 
   const { user, setUser } = UserState();
   const [emailOrUser, setEmailOrUser] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
+  const [errData, setErrData] = useState("");
 
   const signup = () => {
     navigate("signup");
@@ -24,9 +28,11 @@ function Login() {
     console.log(data);
     if (data.token) {
       localStorage.setItem("user", data.token);
-      localStorage.setItem("userData", JSON.stringify(data.user));
       setUser(data.user);
       navigate("home");
+    } else {
+      setError(true);
+      setErrData(data.error);
     }
   };
   return (
@@ -79,6 +85,12 @@ function Login() {
           </h4>
         </div>
       </div>
+
+      <Snackbar open={error} autoHideDuration={6000}>
+        <Alert severity="error" sx={{ width: "100%" }}>
+          {errData}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
