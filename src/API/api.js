@@ -1,1 +1,1 @@
-export const URL = "http://localhost:5550";
+export const URL = "https://social-media-api-qcxk.onrender.com";
