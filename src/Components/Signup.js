@@ -2,14 +2,16 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { URL } from "../API/api";
+import { Alert, Snackbar } from "@mui/material";
 
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
-
+  const [error, setError] = useState(false)
   const [userError, setUserError] = useState(false);
+  const [errorInfo, setErrorInfo] = useState("")
 
   const navigate = useNavigate();
 
@@ -28,15 +30,28 @@ function Signup() {
   };
 
   const signup = async () => {
-    const { data } = await axios.post(`${URL}/user/signup`, {
-      email,
-      username,
-      name,
-      password,
-    });
+    const reg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if(!reg.test(email)){
+      setError(true)
+      setErrorInfo("Invalid Email!!!")
+      console.log("Email is not in proper format");
+      return;
+    }
 
-    if (data.user) {
-      navigate("/");
+    if(username.trim().length !== 0|| name.trim().length !== 0 || password.trim().length !== 0){
+      const { data } = await axios.post(`${URL}/user/signup`, {
+        email,
+        username,
+        name,
+        password,
+      });
+      
+      if (data.user) {
+        navigate("/");
+      }
+    }else{
+      setError(true)
+      setErrorInfo("Invalid Details")
     }
   };
 
@@ -114,6 +129,16 @@ function Signup() {
           </h4>
         </div>
       </div>
+      <Snackbar
+        open={error}
+        autoHideDuration={1000}
+        onClose={() => setError(false)}
+       
+      >
+        <Alert severity="error" sx={{ width: "100%" }}>
+          {errorInfo}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

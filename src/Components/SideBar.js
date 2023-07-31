@@ -2,6 +2,7 @@ import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { SideBarData } from "../Data/SidebarData";
 import { green } from "@mui/material/colors";
+import {FiLogOut} from "react-icons/fi"
 
 function SideBar() {
   const navigate = useNavigate();
@@ -9,6 +10,10 @@ function SideBar() {
     navigate("/home/profile");
   };
 
+  const logout = () =>{
+    navigate("/");
+    localStorage.clear()
+  }
   const navLinkStyle = ({ isActive }) => {
     return {
       backgroundColor: isActive ? "rgba(0,0,0,0.1)" : "#FFF",
@@ -46,6 +51,12 @@ function SideBar() {
           </NavLink>
         </div>
       ))}
+      <div style={{ textAlign: "left", height: "50px" }}  onClick={logout}>
+          <NavLink style={()=>navLinkStyle(false)}>
+            
+      <span style={{ lineHeight: "100%" }}><FiLogOut/></span> Log out
+          </NavLink>
+        </div>
     </div>
   );
 }

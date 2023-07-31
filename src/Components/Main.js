@@ -31,6 +31,8 @@ function Main() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/create" element={<CreatePost />} />
           <Route path="/search" element={<Search />} />
+          {/* <Route path="/" element={<L />} /> */}
+
         </Routes>
       </div>
     </div>

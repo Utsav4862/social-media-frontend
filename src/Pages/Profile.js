@@ -6,7 +6,7 @@ import {
   getCurrentUser,
   getUrlSearchedUser,
 } from "../API/userApi";
-import { Alert, Avatar, Button, Snackbar } from "@mui/material";
+import { Alert, Avatar, Button, LinearProgress, Snackbar } from "@mui/material";
 import "./Profile.css";
 import { getUsersPost } from "../API/postsApi";
 import EditProfile from "../Components/EditProfile";
@@ -27,10 +27,12 @@ function Profile() {
   const [postData, setPostData] = useState();
   const [follow, setFollow] = useState(false);
   const [unFollow, setUnFollow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const getUser = async () => {
+    setIsLoading(true);
     let userData = await getCurrentUser();
     console.log(userData);
     if (uname && userData.username === uname) {
@@ -41,7 +43,9 @@ function Profile() {
       // let data = await getUrlSearchedUser(uname);
 
       setPosts(po);
+     
     } else if (uname) {
+    
       console.log(userData);
       let data = await getUrlSearchedUser(uname);
 
@@ -69,7 +73,7 @@ function Profile() {
       setUser(userData);
       setPosts(po);
     }
-
+    setIsLoading(false)
     console.log(profileUser);
   };
 
@@ -112,6 +116,9 @@ function Profile() {
         padding: "10px",
       }}
     >
+       {isLoading?
+      <LinearProgress color="success" />:""
+      }
       {profileUser ? (
         <div style={{ width: "100%" }}>
           <div className="profile_header">

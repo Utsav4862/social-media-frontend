@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./home.css";
 
 import { BsHandThumbsUp, BsFillHandThumbsUpFill } from "react-icons/bs";
-import { Avatar, Box } from "@mui/material";
+import { Avatar, Box, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { UserState } from "../Context/user";
 import { getTkn } from "../Func/getToken";
@@ -16,8 +16,10 @@ function Home() {
 
   const { user, setUser } = UserState();
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getFollowingPosts = () => {
+    setIsLoading(true)
     getTkn().then(async (tkn) => {
       let config = {
         headers: {
@@ -29,6 +31,7 @@ function Home() {
       let { data } = await axios.get(`${URL}/post/following`, config);
 
       setPosts(data);
+      setIsLoading(false)
     });
   };
 
@@ -57,6 +60,7 @@ function Home() {
   }, []);
 
   return (
+    
     <div
       style={{
         // backgroundColor: "red",
@@ -70,6 +74,9 @@ function Home() {
       }}
     >
       {/* {user !== undefined ? ( */}
+      {isLoading?
+      <LinearProgress color="success" />:""
+      }
       <div className="header">
         <div className="profile_pic">
           <Avatar

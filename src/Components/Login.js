@@ -19,7 +19,7 @@ function Login() {
     navigate("signup");
   };
 
-  const login = async () => {
+  const login = async () => {    
     const { data } = await axios.post(`${URL}/user/login`, {
       emailOrUser,
       password,
