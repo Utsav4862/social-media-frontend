@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Typography } from "@mui/material";
+import { Box, Button, Modal, Typography, LinearProgress } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import React, { useEffect, useState } from "react";
 import "./create.css";
@@ -11,6 +11,7 @@ function CreatePost() {
   const [imageData, setImageData] = useState();
   const [preview, setPreview] = useState();
   const [caption, setCaption] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -42,6 +43,7 @@ function CreatePost() {
   };
 
   const post = async () => {
+    setIsLoading(true);
     let fd = new FormData();
     fd.append("file", imageData);
     fd.append("caption", caption);
@@ -62,6 +64,7 @@ function CreatePost() {
     if (data.length !== 0) {
       navigate("/home");
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -85,6 +88,7 @@ function CreatePost() {
   return (
     <Modal open={open}>
       <Box sx={style}>
+        {isLoading ? <LinearProgress color="success" /> : ""}
         <div className="modal_header">
           <CancelIcon
             onClick={() => navigate("/home")}
@@ -138,9 +142,9 @@ function CreatePost() {
                 fontSize: 18,
                 color: "#fff",
                 backgroundColor: "#2abd6e",
-
                 width: "95%",
               }}
+              disabled={isLoading}
               onClick={post}
             >
               Post

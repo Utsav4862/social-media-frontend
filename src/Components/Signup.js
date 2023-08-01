@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { URL } from "../API/api";
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, Snackbar, LinearProgress } from "@mui/material";
 
 function Signup() {
   const [email, setEmail] = useState("");
@@ -12,6 +12,7 @@ function Signup() {
   const [error, setError] = useState(false)
   const [userError, setUserError] = useState(false);
   const [errorInfo, setErrorInfo] = useState("")
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,24 +21,29 @@ function Signup() {
   };
 
   const checkUserName = async (val) => {
-    let { data } = await axios.get(`${URL}/user/check/${val}`);
-    console.log(data);
-    if (data.error) {
-      setUserError(true);
-    } else {
-      setUserError(false);
+    if(username.trim().length !== 0){
+      
+      let { data } = await axios.get(`${URL}/user/check/${val}`);
+      console.log(data);
+      if (data.error) {
+        setUserError(true);
+      } else {
+        setUserError(false);
+      }
     }
   };
 
   const signup = async () => {
+    setIsLoading(true)  
     const reg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if(!reg.test(email)){
       setError(true)
       setErrorInfo("Invalid Email!!!")
       console.log("Email is not in proper format");
+      setIsLoading(false)
       return;
     }
-
+    // setIsLoading(true)
     if(username.trim().length !== 0|| name.trim().length !== 0 || password.trim().length !== 0){
       const { data } = await axios.post(`${URL}/user/signup`, {
         email,
@@ -53,6 +59,7 @@ function Signup() {
       setError(true)
       setErrorInfo("Invalid Details")
     }
+    setIsLoading(false)
   };
 
   useEffect(() => {
@@ -62,6 +69,10 @@ function Signup() {
   }, [username]);
 
   return (
+    <>
+    {
+      isLoading? <LinearProgress color="success"/> :""
+    }
     <div className="box_wrapper">
       <div className="box">
         <h1>Create a New Account...</h1>
@@ -140,6 +151,7 @@ function Signup() {
         </Alert>
       </Snackbar>
     </div>
+    </>
   );
 }
 

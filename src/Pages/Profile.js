@@ -117,7 +117,7 @@ function Profile() {
       }}
     >
        {isLoading?
-      <LinearProgress color="success" />:""
+      <LinearProgress color="success" style={{marginBottom:5}} />:""
       }
       {profileUser ? (
         <div style={{ width: "100%" }}>

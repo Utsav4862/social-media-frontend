@@ -5,7 +5,7 @@ import { URL } from "../API/api";
 import axios from "axios";
 import { UserState } from "../Context/user";
 
-import { Alert, Box, Modal, Snackbar } from "@mui/material";
+import { Alert, Box, Modal, Snackbar, LinearProgress } from "@mui/material";
 function Login() {
   const navigate = useNavigate();
 
@@ -14,18 +14,20 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [errData, setErrData] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const signup = () => {
     navigate("signup");
   };
 
-  const login = async () => {    
+  const login = async () => {  
+    setIsLoading(true)  
+    console.log(`${URL}/user/login`);
     const { data } = await axios.post(`${URL}/user/login`, {
       emailOrUser,
       password,
     });
 
-    console.log(data);
     if (data.token) {
       localStorage.setItem("user", data.token);
       setUser(data.user);
@@ -34,8 +36,13 @@ function Login() {
       setError(true);
       setErrData(data.error);
     }
+    setIsLoading(false)
   };
   return (
+    <>
+    {
+      isLoading? <LinearProgress color="success"/> :""
+    }
     <div className="box_wrapper">
       <div className="box">
         <h1>Login to Continue...</h1>
@@ -69,6 +76,7 @@ function Login() {
             type="submit"
             style={{ color: "#fff" }}
             onClick={login}
+            disabled={isLoading}
           >
             Login
           </button>
@@ -92,6 +100,7 @@ function Login() {
         </Alert>
       </Snackbar>
     </div>
+    </>
   );
 }
 
